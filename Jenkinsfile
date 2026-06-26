@@ -35,8 +35,23 @@ spec:
         checkout scm
       }
     }
-  stage('Set Image Tag') {2  steps {3    script {4      def shortCommit = sh(5        script: 'git rev-parse --short HEAD',6        returnStdout: true7      ).trim()8 9      env.IMAGE_TAG = "${env.BUILD_NUMBER}-${shortCommit}"10      env.IMAGE = "${env.DOCKERHUB_USER}/${env.APP_NAME}:${env.IMAGE_TAG}"11 12      echo "Image will be: ${env.IMAGE}"13    }14  }15}
-    
+stage('Set Image Tag') {
+  steps {
+    script {
+      sh 'git config --global --add safe.directory "$WORKSPACE"'
+
+      def shortCommit = sh(
+        script: 'git rev-parse --short HEAD',
+        returnStdout: true
+      ).trim()
+
+      env.IMAGE_TAG = "${env.BUILD_NUMBER}-${shortCommit}"
+      env.IMAGE = "${env.DOCKERHUB_USER}/${env.APP_NAME}:${env.IMAGE_TAG}"
+
+      echo "Image will be: ${env.IMAGE}"
+    }
+  }
+}    
 
     stage('Build and Push Image') {
       steps {
