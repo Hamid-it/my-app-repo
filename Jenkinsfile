@@ -35,23 +35,24 @@ spec:
         checkout scm
       }
     }
-stage('Set Image Tag') {
-  steps {
-    script {
-      sh 'git config --global --add safe.directory "$WORKSPACE"'
 
-      def shortCommit = sh(
-        script: 'git rev-parse --short HEAD',
-        returnStdout: true
-      ).trim()
+    stage('Set Image Tag') {
+      steps {
+        script {
+          sh 'git config --global --add safe.directory "$WORKSPACE"'
 
-      env.IMAGE_TAG = "${env.BUILD_NUMBER}-${shortCommit}"
-      env.IMAGE = "${env.DOCKERHUB_USER}/${env.APP_NAME}:${env.IMAGE_TAG}"
+          def shortCommit = sh(
+            script: 'git rev-parse --short HEAD',
+            returnStdout: true
+          ).trim()
 
-      echo "Image will be: ${env.IMAGE}"
+          env.IMAGE_TAG = "${env.BUILD_NUMBER}-${shortCommit}"
+          env.IMAGE = "${env.DOCKERHUB_USER}/${env.APP_NAME}:${env.IMAGE_TAG}"
+
+          echo "Image will be: ${env.IMAGE}"
+        }
+      }
     }
-  }
-}    
 
     stage('Build and Push Image') {
       steps {
@@ -107,6 +108,7 @@ EOF
 
               sed -i "s|image:.*|image: ${IMAGE}|g" deployment.yaml
 
+              git config --global --add safe.directory "$PWD"
               git config user.name "jenkins"
               git config user.email "jenkins@local"
 
