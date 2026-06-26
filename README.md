@@ -1,2 +1,8 @@
 # my-app-repo
-test pipe line
+
+Simple sample application for Jenkins + Argo CD + Kubernetes training.
+
+## Files
+- index.html
+- Dockerfile
+- Jenkinsfile
